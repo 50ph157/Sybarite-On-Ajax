@@ -6,16 +6,12 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.CurrentSecurityContext;
 import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -30,25 +26,16 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterChain(HttpSecurity security) throws Exception {
 		
+		System.out.println("waaaaaa Git Test!!");
+		
 		security.csrf().disable();
-		
-		System.out.println("sddddddddds");
-		
-		
-		
 		//참고 https://stackoverflow.com/questions/47347037/spring-security-guest-user
-		class CustomizedAAF extends AnonymousAuthenticationFilter {
-			private final String key;	// 얘 도대체 무슨 역할인지?
+		security.anonymous().authenticationFilter( new AnonymousAuthenticationFilter(null) {
 			
-			public CustomizedAAF(String key) {
-				super(key);
-				this.key = key;
-			}
-
 			@Override
 			protected Authentication createAuthentication(HttpServletRequest request) {
 
-				System.out.println("### 익명 유저가 새로 생성 ###");
+				System.out.println("### 익명 유저가 새로 접속 ###");
 		    	
 				UserDetails user = (User
 										.withUsername(UUID.randomUUID().toString())
@@ -60,12 +47,10 @@ public class SecurityConfig {
 				//return new AnonymousAuthenticationToken(key, user, AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS"));
 				//ㄴ 아니 뭔 매개변수 순서가 이렇게 제멋대로야 미쳤나 싑
 			}
-		}
-		security.anonymous().authenticationFilter(  new CustomizedAAF("WTF")  );
+			
+		} );
 		
 		
-		
-
 		
 		
 		return security
