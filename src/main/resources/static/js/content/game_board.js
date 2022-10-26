@@ -1,3 +1,4 @@
+// 안정화 작업 완료
 
 let piece_Y, piece_X;
 
